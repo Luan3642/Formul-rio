@@ -1,0 +1,125 @@
+<html>
+    <head>
+        <title>Formulário</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script type="text/javascript" >
+            function FormataCep(evt) {
+                vr = (navigator.appName === 'Netscape') ? evt.target.value : evt.srcElement.values;
+                if (vr.length === 2)
+                    vr = vr + ".";
+                if (vr.length === 6)
+                    vr = vr + "-";
+                return vr;
+            }
+            function limpa_formulário_cep() {
+                //Limpa valores do formulário de cep.
+                document.getElementById('rua').value = ("");
+                document.getElementById('bairro').value = ("");
+                document.getElementById('cidade').value = ("");
+                document.getElementById('uf').value = ("");
+            }
+            function meu_callback(conteudo) {
+                if (!("erro" in conteudo)) {
+                    //Atualiza os campos com os valores.
+                    document.getElementById('rua').value = (conteudo.logradouro);
+                    document.getElementById('bairro').value = (conteudo.bairro);
+                    document.getElementById('cidade').value = (conteudo.localidade);
+                    document.getElementById('uf').value = (conteudo.uf);
+                } //end if.
+                else {
+                    //CEP não Encontrado.
+                    limpa_formulário_cep();
+                    alert("CEP não encontrado.");
+                }
+            }
+            function pesquisacep(valor) {
+                var cep = valor.replace(/\D/g, '');
+                if (cep != "") {
+                    var validacep = /^[0-9]{8}$/;
+                    if (validacep.test(cep)) {
+                        document.getElementById('rua').value = "...";
+                        document.getElementById('bairro').value = "...";
+                        document.getElementById('cidade').value = "...";
+                        document.getElementById('uf').value = "...";
+                        
+                        var script = document.createElement('script');
+                        
+                        script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=meu_callback';
+
+                        document.body.appendChild(script);
+                        document.getElementById("rua").disabled = true;
+                        document.getElementById("bairro").disabled = true;
+                        document.getElementById("cidade").disabled = true;
+                        document.getElementById("uf").disabled = true;
+
+                    } 
+                    else {
+                       
+                        limpa_formulário_cep();
+                        alert("Formato de CEP inválido.");
+                        document.getElementById("rua").disabled = false;
+                             document.getElementById("bairro").disabled = false;
+                             document.getElementById("cidade").disabled = false;
+                             document.getElementById("uf").disabled = false;
+                    }
+                } 
+                else {
+                  
+                    limpa_formulário_cep();
+                }
+            }
+            ;
+        </script>
+    </head>
+    <body>
+        <h1 style="text-align: center">Formulário</h1>
+        <!-- Inicio do formulario -->
+        <div class="row">
+            <div class="col-md-5">
+                <form method="get" action="." style="padding-left: 20px;">
+                    <div class="form-group">
+                        <label>Cep:</label>
+                        <input  type="text" id="cep" value="" size="10" onkeypress="this.value = FormataCep(event)"
+                                onblur="pesquisacep(this.value)" class="form-control   is-invalid"  required/>
+                    </div>
+                    <div class="form-group">
+                        <label>endereco:</label>
+                        <input  type="text" id="rua" size="60" class="form-control is-invalid"   onclick="javascript:desabilita_a()" required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Bairro:</label>
+                        <input name="bairro" type="text" id="bairro" size="40" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Cidade:</label>
+                        <input name="cidade" type="text" id="cidade" size="40" class="form-control is-invalid"  required/>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado:</label>
+                        <input name="uf" type="text" id="uf" size="2" class="form-control is-invalid"  required/>
+                    </div>
+                    <div class="form-group">
+                        <label >Identificação do endereço</label>
+                        <input type="text" class="form-control is-invalid"  required>
+                    </div>
+                    <div class="form-group">
+                        <label>Número</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Complemento</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Referência para entrega</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Cadastrar</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
